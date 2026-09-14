@@ -1,0 +1,6 @@
+{"name":"signalk-server","version":"2.13.0","self":"vessels.urn:mrn:signalk:uuid:18b5698f-bb9f-421e-ac60-f9c98a7e834f","roles":["master","main"],"timestamp":"2026-08-22T09:14:59.000Z"}
+{"context":"vessels.self","updates":[{"$source":"ngx1.43","timestamp":"2026-08-22T09:15:00.000Z","values":[{"path":"navigation.anchor.position","value":{"latitude":36.8342,"longitude":10.2991}},{"path":"navigation.anchor.maxRadius","value":30.0}]}]}
+{"context":"vessels.self","updates":[{"$source":"ngx1.35","timestamp":"2026-08-22T09:15:01.000Z","values":[{"path":"environment.depth.belowTransducer","value":2.1},{"path":"navigation.speedOverGround","value":2.8}]}]}
+{"context":"vessels.self","updates":[{"$source":"ngx1.43","timestamp":"2026-08-22T09:15:01.500Z","values":[{"path":"navigation.position","value":{"latitude":36.8362,"longitude":10.2991}}]}]}
+{"context":"vessels.self","updates":[{"$source":"victron-ble.mppt","timestamp":"2026-08-22T09:15:02.000Z","values":[{"path":"electrical.solar.mppt.voltage","value":13.3},{"path":"electrical.solar.mppt.panelPower","value":180.0}]}]}
+{"context":"vessels.self","updates":[{"$source":"1wire","timestamp":"2026-08-22T09:15:02.500Z","values":[{"path":"environment.inside.locker.temperature","value":318.15}]}]}

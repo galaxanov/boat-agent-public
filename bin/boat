@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# boat - the one command.
+#
+#   boat                       the console: what the agent sees, and a letter
+#   boat --forecast            anything the agent takes, passed straight through
+#   boat --anchor-up
+#
+# Installed as a symlink in ~/.local/bin by deploy/install-command.sh, so it
+# works from any directory with no venv path to remember and no cd. It finds
+# the repo by following its own symlink, which means a moved or renamed
+# checkout keeps working and there is nothing to edit here.
+#
+# No sudo anywhere. If the agent is not running the console says so and offers
+# to start it, through a systemd *user* unit, which needs no privileges.
+
+set -euo pipefail
+
+# Follow the symlink to the real script, then up out of bin/ to the repo.
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  TARGET="$(readlink "$SOURCE")"
+  case "$TARGET" in
+    /*) SOURCE="$TARGET" ;;
+    *) SOURCE="$(dirname "$SOURCE")/$TARGET" ;;
+  esac
+done
+REPO="$(cd "$(dirname "$SOURCE")/.." && pwd)"
+
+# The repo venv is the one the service runs from, so the console sees exactly
+# what the agent sees. Fall back to whatever python3 is around rather than
+# failing outright: a missing venv should not stop somebody reading the screen.
+PYTHON="$REPO/.venv/bin/python"
+if [ ! -x "$PYTHON" ]; then
+  PYTHON="$(command -v python3 || true)"
+  if [ -z "$PYTHON" ]; then
+    echo "boat: no python found. Run ./deploy/install.sh --laptop in $REPO" >&2
+    exit 1
+  fi
+  echo "boat: no venv in $REPO, falling back to $PYTHON" >&2
+fi
+
+# No arguments means the screen. Anything else goes straight to the agent, so
+# every flag in --help keeps working through this command.
+if [ "$#" -eq 0 ]; then
+  set -- --console
+fi
+
+cd "$REPO"
+exec "$PYTHON" -m agent.main "$@"

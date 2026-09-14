@@ -1,0 +1,3 @@
+# Runtime dependencies. Kept deliberately small - this has to install on a Pi
+# over Starlink, and nothing may hard-fail without internet once installed.
+websockets>=14,<16

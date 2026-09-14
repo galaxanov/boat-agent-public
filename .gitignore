@@ -1,0 +1,22 @@
+# Secrets live on the Pi only.
+.env
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Signal K config backups made by deploy/apply-signalk-config.sh
+*.bak-*
+
+# Daily logs written by the agent
+logs/
+
+# Claude Code per-machine settings
+.claude/settings.local.json
+
+# Editor and tool droppings
+.DS_Store
+uv.lock

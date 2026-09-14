@@ -1,0 +1,47 @@
+[
+  {
+    "$comment": "The vessel's identity and fixed dimensions - placeholders, replace them with your own boat's - installed to ~/.signalk/baseDeltas.json by deploy/apply-signalk-config.sh. NOT defaults.json, which is the legacy object shape and is read, found to have no vessels.self, and discarded in silence. Note the empty path on the first entry: the server looks up its own name, uuid and mmsi with getSelfValue, which for a dotless path reads them out of a single value object stored under path \"\". Listing them as separate entries with path \"name\" and path \"uuid\" still populates the data tree, so everything looks right in the browser, but the server cannot find its own uuid, selfId comes out undefined, and every delta context becomes vessels.undefined. Dotted paths below are ordinary per-path entries.",
+    "context": "vessels.self",
+    "updates": [
+      {
+        "values": [
+          {
+            "path": "",
+            "value": {
+              "name": "Seabird",
+              "uuid": "urn:mrn:signalk:uuid:18b5698f-bb9f-421e-ac60-f9c98a7e834f"
+            }
+          },
+          {
+            "path": "design.length",
+            "value": {
+              "overall": 12.0
+            }
+          },
+          {
+            "path": "design.draft",
+            "value": {
+              "maximum": 2.0,
+              "keel": 2.0
+            }
+          },
+          {
+            "path": "design.displacement",
+            "value": 8000
+          },
+          {
+            "path": "design.aisShipType",
+            "value": {
+              "id": 36,
+              "name": "Sailing"
+            }
+          },
+          {
+            "path": "environment.depth.transducerToKeel",
+            "value": 2.0
+          }
+        ]
+      }
+    ]
+  }
+]

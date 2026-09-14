@@ -1,0 +1,46 @@
+# Boat agent.
+# Template: deploy/install.sh substitutes @USER@ / @REPO_DIR@ / @VENV@ and
+# installs the result as /etc/systemd/system/boat-agent.service.
+
+[Unit]
+Description=Boat agent
+Documentation=https://signalk.org/
+# Signal K is the data source, but the agent must reconnect on its own anyway,
+# so this is ordering only - not a hard dependency.
+After=network-online.target signalk.service
+Wants=network-online.target
+# Never give up after repeated restarts during a long outage.
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=@USER@
+WorkingDirectory=@REPO_DIR@
+EnvironmentFile=-@REPO_DIR@/.env
+Environment=PYTHONUNBUFFERED=1
+ExecStart=@VENV@/bin/python -m agent.main
+
+# The boat loses power, WiFi and the N2K bus routinely: always come back.
+Restart=always
+RestartSec=10
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=boat-agent
+
+# Modest hardening. The agent only needs to read Signal K over the network and
+# write its own daily logs inside the repo.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+# The repo, for logs/ and the notification outbox.
+ReadWritePaths=@REPO_DIR@
+# signal-cli keeps its account and Signal Protocol session state here and
+# rewrites it on every send, so under ProtectHome=read-only every alert would
+# fail to go out. Leading '-' so the unit still starts before signal-cli has
+# been linked and the directory exists.
+ReadWritePaths=-@SIGNAL_DATA@
+
+[Install]
+WantedBy=multi-user.target

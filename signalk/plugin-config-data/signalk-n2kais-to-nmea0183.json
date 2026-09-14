@@ -1,0 +1,8 @@
+{
+  "enabled": true,
+  "enableLogging": false,
+  "configuration": {
+    "events": "nmea0183out",
+    "sendSelf": false
+  }
+}

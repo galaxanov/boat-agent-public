@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "enableLogging": false,
+  "configuration": {
+    "conversions": [
+      { "sentence": "RMC", "throttle": 1000 },
+      { "sentence": "VTG", "throttle": 1000 },
+      { "sentence": "DPT", "throttle": 1000 },
+      { "sentence": "DBT", "throttle": 1000 },
+      { "sentence": "MWVR", "throttle": 1000 },
+      { "sentence": "MWVT", "throttle": 1000 },
+      { "sentence": "MWD", "throttle": 2000 },
+      { "sentence": "HDM", "throttle": 1000 },
+      { "sentence": "VHW", "throttle": 1000 },
+      { "sentence": "VLW", "throttle": 10000 },
+      { "sentence": "MTW", "throttle": 10000 },
+      { "sentence": "ZDA", "throttle": 10000 }
+    ]
+  }
+}

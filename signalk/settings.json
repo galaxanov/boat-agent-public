@@ -1,0 +1,49 @@
+{
+  "$comment": "Boat agent Signal K server settings. The repo is the source of truth; deploy/apply-signalk-config.sh installs this to ~/.signalk/settings.json. Vessel identity lives in baseDeltas.json, not here - and not in defaults.json either, which is the legacy shape this server silently ignores. See signalk/README.md.",
+
+  "interfaces": {
+    "nmea-tcp": true
+  },
+
+  "ssl": false,
+
+  "pipedProviders": [
+    {
+      "$comment": "A u-blox GPS on USB, read through gpsd rather than opened directly. A serial port has exactly one owner, and more than one thing aboard wants this receiver: the agent, OpenCPN, and whatever gets plugged in next. gpsd is the daemon whose whole job is to be that owner and hand the data to as many clients as ask for it, so it holds the receiver and everyone else, including this, is a client. Signal K speaks gpsd's protocol natively and asks it for NMEA. OpenCPN connects to the same daemon on 2947 rather than coming through here, so its position does not depend on Signal K being up. deploy/install.sh runs gpsd with -n, which matters more than it looks: without it gpsd opens the receiver only when a client connects, so OpenCPN would wait out a cold start every launch. With it the receiver tracks continuously and a fix is there the moment anything asks.",
+      "id": "ublox",
+      "enabled": true,
+      "pipeElements": [
+        {
+          "type": "providers/simple",
+          "options": {
+            "logging": false,
+            "type": "NMEA0183",
+            "subOptions": {
+              "type": "gpsd",
+              "hostname": "localhost",
+              "port": 2947
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "ngx1",
+      "enabled": true,
+      "pipeElements": [
+        {
+          "type": "providers/simple",
+          "options": {
+            "logging": false,
+            "type": "NMEA2000",
+            "subOptions": {
+              "type": "ngt-1-canboatjs",
+              "device": "/dev/ngx1",
+              "baudrate": 115200
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

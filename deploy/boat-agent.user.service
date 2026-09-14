@@ -1,0 +1,50 @@
+# Boat agent, as a systemd USER unit.
+#
+# Template: deploy/install-command.sh substitutes @REPO_DIR@ / @VENV@ and
+# installs the result as ~/.config/systemd/user/boat-agent.service.
+#
+# A user unit rather than a system one, for two reasons.
+#
+# Nothing about this agent needs root. It reads a websocket, writes files
+# inside its own repo, and runs three commands that all belong to the logged-in
+# user anyway. Installing it system-wide bought nothing and cost a sudo prompt
+# every time the code changed, which is a tax on the one thing you want to be
+# easy: keeping the boat's monitoring up to date.
+#
+# And the session comes free. A user unit inherits XDG_RUNTIME_DIR and
+# DBUS_SESSION_BUS_ADDRESS, which are what pw-play needs to reach the speakers
+# and notify-send needs to reach the screen. The system unit had neither, and
+# agent/sound.py and agent/desktop.py both fill them in by hand for exactly
+# that case. Here they are simply correct, and those fallbacks become the
+# belt-and-braces they were meant to be.
+#
+# The one thing a user unit does not do by itself is start at boot before
+# anybody logs in. `loginctl enable-linger` fixes that, and the install script
+# offers it - that is the last sudo this ever needs.
+
+[Unit]
+Description=Boat agent
+Documentation=https://signalk.org/
+# Signal K is the data source, but the agent reconnects on its own anyway, so
+# this is ordering only, not a hard dependency.
+After=graphical-session.target
+# Never give up after repeated restarts during a long outage.
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+WorkingDirectory=@REPO_DIR@
+EnvironmentFile=-@REPO_DIR@/.env
+Environment=PYTHONUNBUFFERED=1
+ExecStart=@VENV@/bin/python -m agent.main
+
+# The boat loses power, WiFi and the N2K bus routinely: always come back.
+Restart=always
+RestartSec=10
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=boat-agent
+
+[Install]
+WantedBy=default.target

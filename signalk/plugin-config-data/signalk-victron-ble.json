@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "enableLogging": false,
+  "configuration": {
+    "devices": [
+      {
+        "id": "mppt",
+        "mac": "@VICTRON_MPPT_MAC@",
+        "key": "@VICTRON_MPPT_KEY@"
+      }
+    ]
+  }
+}
